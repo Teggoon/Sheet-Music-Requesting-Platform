@@ -3,20 +3,43 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
 
-<body ng-app="myApp">
+<body>
 <h1> Newsheets </h1>
 Please log in or sign up
 
-<form action="/submit_form" method="POST">
-<fieldset>
-<label>Username or email: </label>
-<input type="text" name="username">
-<br>
-<label>Password: </label>
-<input type="text" name="password">
-<input type="submit" value="Submit">
-</fieldset>
-</form>
+<script>
+var app = angular.module("login_page",[]);
+app.controller("choose_login_or_signup",function($scope) {
+  $scope.form_description = "Please log in";
+
+  $scope.choose_signup = function() {
+    $scope.form_description = "Please sign up";
+  };
+
+  $scope.choose_login = function() {
+    $scope.form_description = "Please log in";
+  };
+});
+</script>
+
+<div ng-app="login_page" ng-controller="choose_login_or_signup">
+
+  <button ng-click="choose_login()">Login</button>
+  <button ng-click="choose_signup()">Signup</button>
+
+  <form action="/submit_form" method="POST">
+    <fieldset>
+      {{form_description}}
+      <br>
+      <label>Username or email: </label>
+      <input type="text" name="username">
+      <br>
+      <label>Password: </label>
+      <input type="text" name="password">
+      <input type="submit" value="Submit">
+    </fieldset>
+  </form>
+</div>
 
 </body>
 </html>

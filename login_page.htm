@@ -11,13 +11,16 @@ Please log in or sign up
 var app = angular.module("login_page",[]);
 app.controller("choose_login_or_signup",function($scope) {
   $scope.form_description = "Please log in";
+  $scope.option = "submit_form/login";
 
   $scope.choose_signup = function() {
     $scope.form_description = "Please sign up";
+    $scope.option = "submit_form/signup";
   };
 
   $scope.choose_login = function() {
     $scope.form_description = "Please log in";
+    $scope.option = "submit_form/login";
   };
 });
 </script>
@@ -27,7 +30,7 @@ app.controller("choose_login_or_signup",function($scope) {
   <button ng-click="choose_login()">Login</button>
   <button ng-click="choose_signup()">Signup</button>
 
-  <form action="/submit_form" method="POST">
+  <form action={{option}} method="POST">
     <fieldset>
       {{form_description}}
       <br>

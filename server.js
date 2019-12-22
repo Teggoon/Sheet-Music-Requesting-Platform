@@ -34,12 +34,20 @@ app.get('/client',function(req,res)
   });
 });
 
-app.post('/submit_form',function(req,res)
+app.post('/submit_form/login',function(req,res)
 {
-  console.log("Client sent info:");
+  console.log("Client requesting login:");
   console.log(req.body.username);
   console.log(req.body.password);
 });
+
+app.post('/submit_form/signup',function(req,res)
+{
+  console.log("Client requesting new account:");
+  console.log(req.body.username);
+  console.log(req.body.password);
+});
+
 var server=app.listen(3000,function() {});
 
 console.log("Server listening on port 3000");

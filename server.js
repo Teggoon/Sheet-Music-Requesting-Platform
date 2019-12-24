@@ -1,7 +1,9 @@
 var express = require('express');
 var fs = require('fs');
 var bodyParser = require('body-parser');
-var mongo = require('mongodb');
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb+srv://Teggoon:admin@cluster0-zplsz.mongodb.net/test?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true });
 
 
 var app = express();
@@ -35,6 +37,15 @@ app.get('/client',function(req,res)
   });
 });
 
+/*
+
+client.connect(err => {
+  const collection = client.db("smdb").collection("accounts");
+  collection.insertOne(filler_acc);
+  client.close();
+});
+
+*/
 app.post('/submit_form/login',function(req,res)
 {
   console.log("Client requesting login:");

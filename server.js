@@ -57,6 +57,7 @@ app.post('/submit_form/signup',function(req,res)
 {
   console.log("Client requesting new account:");
   console.log(req.body.username);
+  console.log(req.body.email);
   console.log(req.body.password);
 });
 

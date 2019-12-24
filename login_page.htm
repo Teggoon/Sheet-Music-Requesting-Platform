@@ -10,17 +10,31 @@ Please log in or sign up
 <script>
 var app = angular.module("login_page",[]);
 app.controller("choose_login_or_signup",function($scope) {
+  $scope.login_labels = [
+    {description: "username or email", var_name: "username"},
+    {description: "password", var_name: "password"}
+  ];
+  $scope.signup_labels = [
+    {description: "username", var_name: "username"},
+    {description: "email", var_name: "email"},
+    {description: "password", var_name: "password"}
+  ];
+
   $scope.form_description = "Please log in";
   $scope.option = "submit_form/login";
+  $scope.label_option = $scope.login_labels;
 
   $scope.choose_signup = function() {
     $scope.form_description = "Please sign up";
     $scope.option = "submit_form/signup";
+    $scope.label_option = $scope.signup_labels;
   };
 
   $scope.choose_login = function() {
     $scope.form_description = "Please log in";
     $scope.option = "submit_form/login";
+    $scope.label_option = $scope.login_labels;
+
   };
 });
 </script>
@@ -33,12 +47,18 @@ app.controller("choose_login_or_signup",function($scope) {
   <form action={{option}} method="POST">
     <fieldset>
       {{form_description}}
+
       <br>
-      <label>Username or email: </label>
-      <input type="text" name="username">
+      <div ng-repeat="x in label_option">
+        <label>{{x.description}} : </label>
+        <input type="text" name={{x.var_name}}>
+      </div>
+      <!--
       <br>
       <label>Password: </label>
       <input type="text" name="password">
+      -->
+
       <input type="submit" value="Submit">
     </fieldset>
   </form>

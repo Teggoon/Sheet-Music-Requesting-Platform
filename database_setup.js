@@ -1,5 +1,21 @@
-const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://Teggoon:admin@cluster0-zplsz.mongodb.net/test?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true });
+var MongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/";
 
-var filler_acc = {username: "_", email: "_", password: "_"};
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("smdb");
+
+  dbo.createCollection("accounts", function(err, res) {
+    if (err) throw err;
+  });
+
+  var accountCollection = dbo.collection("accounts");
+
+  accountCollection.insertOne({username: "_", email: "_", password: "_", });
+
+  accountCollection.find({}).toArray(function(err, result) {
+    console.log(result);
+  });
+
+  db.close();
+});

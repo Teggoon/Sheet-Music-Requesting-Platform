@@ -9,7 +9,7 @@ Please log in or sign up
 
 <script>
 var app = angular.module("login_page",[]);
-app.controller("choose_login_or_signup",function($scope) {
+app.controller("choose_login_or_signup",function($scope, $http) {
   $scope.login_labels = [
     {description: "username or email", var_name: "username"},
     {description: "password", var_name: "password"}
@@ -22,6 +22,7 @@ app.controller("choose_login_or_signup",function($scope) {
 
   $scope.form_description = "Please log in";
   $scope.option = "submit_form/login";
+  $scope.server_response =  "";
   $scope.label_option = $scope.login_labels;
 
   $scope.choose_signup = function() {
@@ -36,8 +37,19 @@ app.controller("choose_login_or_signup",function($scope) {
     $scope.label_option = $scope.login_labels;
 
   };
+
+
 });
+
+
+
 </script>
+
+
+<!--<div ng-app="login_page" ng-controller="server_response">
+  {{server_response}}
+</div>
+-->
 
 <div ng-app="login_page" ng-controller="choose_login_or_signup">
 

@@ -65,6 +65,12 @@ app.get('/client',function(req,res)
       var usernameExists = false;
       var emailExists = false;
 
+      console.log("Current accounts in the database:");
+      collection.find({}).toArray(function(err, result) {
+        console.log(result);
+      });
+
+
       collection.find({username: cusername}).toArray(function(err, result) {
         if (result.length > 0) {
           usernameExists = true;
@@ -87,7 +93,11 @@ app.get('/client',function(req,res)
       }
 
       if (!canProceed) {
+        console.log("Client's username not found; access denied.");
+        res.send("Username not found!");
 
+      } else {
+        console.log("Client's username found! Proceeding to checking password.");
       }
 
       db.close();
@@ -110,6 +120,34 @@ app.get('/client',function(req,res)
       var dbo = db.db("smdb");
 
       var collection = dbo.collection("accounts");
+      var usernameCollision = false;
+      var emailCollision = false;
+
+      collection.find({username: cusername}).toArray(function(err, result) {
+        if (result.length > 0) {
+          usernameCollision = true;
+          console.log("Client's requested username is already taken!");
+        }
+      });
+
+      collection.find({username: cemail}).toArray(function(err, result) {
+        if (result.length > 0) {
+          emailCollision = true;
+          console.log("Client's requested email has already registered!");
+        }
+      });
+
+      if (usernameCollision) {
+
+      } else if (emailCollision) {
+
+      } else {
+        console.log("No collision detected! Proceeding to create account");
+
+        collection.insertOne({username: cusername, email: cemail, password: cpassword});
+        console.log("New account created!");
+      }
+
 
       db.close();
     });

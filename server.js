@@ -70,23 +70,60 @@ app.get('/client',function(req,res)
         console.log(result);
       });
 
-
-      collection.find({username: cusername}).toArray(function(err, result) {
-        if (result.length > 0) {
-          usernameExists = true;
-          console.log("Username exists");
-        }
+      var promise_checkUsernameExistence = new Promise(function(resolve, reject) {
+        collection.find({username: cusername}).toArray(function(err, result) {
+          if (result.length > 0) {
+            usernameExists = true;
+          }
+          resolve(usernameExists);
+        });
       });
 
-      if (!usernameExists) {
+
+      var promise_checkEmailExistence = new Promise(function(resolve, reject) {
         collection.find({email: cusername}).toArray(function(err, result) {
           if (result.length > 0) {
             usernameExists = true;
+          }
+          resolve(usernameExists);
+        });
+      });
+
+      function checkUsernameExistence() {
+        promise_checkUsernameExistence.then(function(result) {
+            console.log("Returned from username check, the promise's result is: " + result);
+            if (!result) {
+              checkEmailExistence();
+            }
+        }, function(err) {
+            console.log("Something went wrong at username check");
+        }
+        );
+      }
+
+      function checkEmailExistence() {
+        promise_checkEmailExistence.then(function(result) {
+            console.log("Returned from email check, the promise's result is: " + result);
+            if (!result) {
+                canProceed = false;
+            }
+        }, function(err) {
+            console.log("Something went wrong at email check");
+        }
+        );
+      }
+
+checkUsernameExistence();
+
+      /*if (!usernameExists) {
+        collection.find({email: cusername}).toArray(function(err, result) {
+          if (result.length > 0) {
+            emailExists = true;
             console.log("Email exists");
           }
         });
-      }
-
+      }*/
+      /*
       var canProceed = false;
       if (emailExists || usernameExists) {
         canProceed = true;
@@ -97,8 +134,10 @@ app.get('/client',function(req,res)
         res.send("Username not found!");
 
       } else {
+      res.send("Username found!");
         console.log("Client's username found! Proceeding to checking password.");
       }
+      */
 
       db.close();
     });

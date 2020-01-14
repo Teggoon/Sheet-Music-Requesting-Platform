@@ -64,6 +64,8 @@ app.get('/client',function(req,res)
       var collection = dbo.collection("accounts");
       var usernameExists = false;
       var emailExists = false;
+      var passwordCorrect = false;
+      var canProceed = false;
 
       console.log("Current accounts in the database:");
       collection.find({}).toArray(function(err, result) {
@@ -72,9 +74,7 @@ app.get('/client',function(req,res)
 
       var promise_checkUsernameExistence = new Promise(function(resolve, reject) {
         collection.find({username: cusername}).toArray(function(err, result) {
-          if (result.length > 0) {
-            usernameExists = true;
-          }
+          usernameExists = result.length > 0;
           resolve(usernameExists);
         });
       });
@@ -82,10 +82,15 @@ app.get('/client',function(req,res)
 
       var promise_checkEmailExistence = new Promise(function(resolve, reject) {
         collection.find({email: cusername}).toArray(function(err, result) {
-          if (result.length > 0) {
-            usernameExists = true;
-          }
+          usernameExists = result.length > 0;
           resolve(usernameExists);
+        });
+      });
+
+      var promise_checkPassword = new Promise(function(resolve, reject) {
+        collection.find({password: cpassword}).toArray(function(err, result) {
+          passwordCorrect = result.length > 0;
+          resolve(passwordCorrect);
         });
       });
 
@@ -94,6 +99,9 @@ app.get('/client',function(req,res)
             console.log("Returned from username check, the promise's result is: " + result);
             if (!result) {
               checkEmailExistence();
+            } else {
+              canProceed = result;
+              processUsernameValidity(canProceed);
             }
         }, function(err) {
             console.log("Something went wrong at username check");
@@ -104,40 +112,48 @@ app.get('/client',function(req,res)
       function checkEmailExistence() {
         promise_checkEmailExistence.then(function(result) {
             console.log("Returned from email check, the promise's result is: " + result);
-            if (!result) {
-                canProceed = false;
-            }
+            canProceed = result;
+            processUsernameValidity(canProceed);
         }, function(err) {
             console.log("Something went wrong at email check");
         }
         );
       }
 
-checkUsernameExistence();
-
-      /*if (!usernameExists) {
-        collection.find({email: cusername}).toArray(function(err, result) {
-          if (result.length > 0) {
-            emailExists = true;
-            console.log("Email exists");
+      function checkPassword() {
+        promise_checkPassword.then(function(result) {
+          if (result) {
+            console.log("Password Is Correct!!");
+          } else {
+            console.log("Password Is incorrect.");
           }
-        });
-      }*/
-      /*
-      var canProceed = false;
-      if (emailExists || usernameExists) {
-        canProceed = true;
+        }, function(err) {
+            console.log("Something went wrong at email check");
+        }
+        );
       }
 
-      if (!canProceed) {
-        console.log("Client's username not found; access denied.");
-        res.send("Username not found!");
+      function processUsernameValidity(canProceed) {
+        console.log("I am called.");
+        if (!canProceed) {
+          console.log("Client's username not found; access denied.");
+          res.send("Username not found!");
 
-      } else {
-      res.send("Username found!");
-        console.log("Client's username found! Proceeding to checking password.");
+        } else {
+          console.log("Client's username found! Proceeding to checking password.");
+          checkPassword();
+        }
       }
-      */
+
+      function checkClientLogin() {
+        checkUsernameExistence();
+      }
+
+checkClientLogin();
+
+
+
+
 
       db.close();
     });

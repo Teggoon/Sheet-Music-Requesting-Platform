@@ -14,7 +14,7 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: false }))
 
 
-
+//takes in 3 promises, a request body, and a response object
 function checkUsernameExistence(usernamePromise, emailPromise, passwordPromise, reqbody, res) {
   usernamePromise.then(function(result) {
       console.log("Returned from username check, the promise's result is: " + result);
@@ -29,6 +29,8 @@ function checkUsernameExistence(usernamePromise, emailPromise, passwordPromise, 
   }
   );
 }
+
+//takes in 2 promises, a request body, and a response object
 function checkEmailExistence(emailPromise, passwordPromise, reqbody, res) {
   emailPromise.then(function(result) {
       console.log("Returned from email check, the promise's result is: " + result);
@@ -46,7 +48,9 @@ function processUsernameValidity(passwordPromise, canProceed, reqbody, res) {
   if (!canProceed) {
     console.log("Client's username not found; access denied.");
     res.send("Username not found!");
-
+    res.statusCode = 200;
+    res.write("Username not found!");
+    res.send();
   } else {
     console.log("Client's username found! Proceeding to checking password.");
     checkPassword(passwordPromise, reqbody, res);
@@ -61,9 +65,12 @@ function checkPassword(passwordPromise, reqbody, res) {
       sendToClientPage(reqbody, res);
     } else {
       console.log("Password Is incorrect.");
+      res.statusCode = 200;
+      res.write("Password is incorrect!");
+      res.send();
     }
   }, function(err) {
-      console.log("Something went wrong at email check");
+      console.log("Something went wrong at password check");
   }
   );
 }
@@ -74,11 +81,11 @@ function checkClientLogin(usernamePromise, emailPromise, passwordPromise, reqbod
 
 
 function sendToClientPage(req, res) {
-    fs.readFile('client_portal.htm', function(err, data) {
-      res.writeHead(200, {'Content-Type': 'text/html'});
-      res.write(data);
-      return res.end();
-    });
+  fs.readFile('client_portal.htm', function(err, data) {
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.write(data);
+    return res.end();
+  });
 }
 
 
@@ -90,7 +97,7 @@ app.get('/',function(req,res)
     return res.end();
   });
 });
-
+/*
 app.get('/composer',function(req,res)
 {
   fs.readFile('composer_portal.htm', function(err, data) {
@@ -107,11 +114,12 @@ app.get('/client',function(req,res)
     res.write(data);
     return res.end();
   });
-});
+});*/
 
 
-
-
+// Handling login requests.
+// req is the request object
+// res is the response object
 app.post('/submit_form/login',function(req,res)
 {
   var cusername = req.body.username;
@@ -119,6 +127,8 @@ app.post('/submit_form/login',function(req,res)
   console.log("Client requesting login:");
   console.log("Client username: " + cusername);
   console.log("Client password: " + cpassword);
+
+  //two objects used to query in MongoDB
   var queryUsername = {username: cusername};
   var queryEmail = {email: cusername};
 
@@ -126,13 +136,14 @@ app.post('/submit_form/login',function(req,res)
     if (err) throw err;
     var dbo = db.db("smdb");
 
-
+    // basic database checking
     var collection = dbo.collection("accounts");
     var usernameExists = false;
     var emailExists = false;
     var passwordCorrect = false;
     var canProceed = false;
 
+    // Sanity check to see the accounts in the database
     console.log("Current accounts in the database:");
     collection.find({}).toArray(function(err, result) {
       console.log(result);

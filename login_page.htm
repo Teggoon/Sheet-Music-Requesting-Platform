@@ -7,9 +7,10 @@
 <h1> Newsheets </h1>
 Please log in or sign up
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script>
 var app = angular.module("login_page",[]);
-app.controller("choose_login_or_signup",function($scope, $http) {
+app.controller("choose_login_or_signup", function($scope, $http) {
   $scope.login_labels = [
     {description: "username or email", var_name: "username"},
     {description: "password", var_name: "password"}
@@ -35,8 +36,32 @@ app.controller("choose_login_or_signup",function($scope, $http) {
     $scope.form_description = "Please log in";
     $scope.option = "submit_form/login";
     $scope.label_option = $scope.login_labels;
+  };
+
+  $scope.request_proceed = function() {
+
+    //AJAX request
+    var xhttp = new XMLHttpRequest();
+      xhttp.open("POST", "/", true);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+      //serializing form data
+      var data = $('form').serialize();
+
+      // actual posting of request:
+      // request url (handled by Express on the other side)
+      // callback function handling the response object.
+      var requesturl = "/" + $scope.option;
+      $.post(requesturl,
+      data,
+      //data is the returned response from the server
+      function(data, status){
+        $("#returnMessage").html(data);
+      });
 
   };
+
+
 
 
 });
@@ -56,10 +81,11 @@ app.controller("choose_login_or_signup",function($scope, $http) {
   <button ng-click="choose_login()">Login</button>
   <button ng-click="choose_signup()">Signup</button>
 
-  <form action={{option}} method="POST">
+  <form id="login_form" action={{option}} method="POST">
     <fieldset>
       {{form_description}}
-
+      <br>
+      <div id="returnMessage"></div>
       <br>
       <div ng-repeat="x in label_option">
         <label>{{x.description}} : </label>
@@ -71,9 +97,11 @@ app.controller("choose_login_or_signup",function($scope, $http) {
       <input type="text" name="password">
       -->
 
-      <input type="submit" value="Submit">
+      <!--<input type="submit" value="Submit">-->
+
     </fieldset>
   </form>
+  <button ng-click="request_proceed()">Submit</button>
 </div>
 
 </body>

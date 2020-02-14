@@ -81,7 +81,7 @@ function checkClientLogin(usernamePromise, emailPromise, passwordPromise, reqbod
 
 
 function sendToClientPage(req, res) {
-  fs.readFile('client_portal.htm', function(err, data) {
+  fs.readFile('client/client_portal.htm', function(err, data) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
     return res.end();
@@ -91,7 +91,7 @@ function sendToClientPage(req, res) {
 
 app.get('/',function(req,res)
 {
-  fs.readFile('login_page.htm', function(err, data) {
+  fs.readFile('client/login_page.htm', function(err, data) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
     return res.end();

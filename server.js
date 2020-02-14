@@ -227,6 +227,7 @@ app.post('/submit_form/signup',function(req,res)
 
       collection.insertOne({username: cusername, email: cemail, password: cpassword});
       console.log("New account created!");
+      sendToClientPage(req, res);
     }
 
 

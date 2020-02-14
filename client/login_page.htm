@@ -56,7 +56,11 @@ app.controller("choose_login_or_signup", function($scope, $http) {
       data,
       //data is the returned response from the server
       function(data, status){
-        $("#returnMessage").html(data);
+        if (data[0] == "<") {
+          $("body").html(data);
+        } else {
+          $("#returnMessage").html(data);
+        }
       });
 
   };

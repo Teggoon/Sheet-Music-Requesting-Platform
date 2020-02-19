@@ -3,14 +3,36 @@
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
 
-<body>
-<h1> Newsheets </h1>
-Please log in or sign up
+
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<body ng-app="master_client_page">
+
+<!--<div ng-app="login_page" ng-controller="server_response">
+  {{server_response}}
+</div>
+-->
+
+<div ng-view></div>
+
+
 <script>
-var app = angular.module("login_page",[]);
-app.controller("choose_login_or_signup", function($scope, $http) {
+var app = angular.module("master_client_page",["ngRoute"]);
+
+app.config(function($routeProvider) {
+  $routeProvider
+  .when("/", {
+    templateUrl : "login_page_template.htm",
+    controller : "login_page"
+  })
+  .when("/client_portal", {
+    templateUrl : "client_portal.htm",
+    controller : "client_portal"
+  })
+});
+
+app.controller("login_page", function($scope, $http) {
   $scope.login_labels = [
     {description: "username or email", var_name: "username"},
     {description: "password", var_name: "password"}
@@ -39,7 +61,6 @@ app.controller("choose_login_or_signup", function($scope, $http) {
   };
 
   $scope.request_proceed = function() {
-
     //AJAX request
     var xhttp = new XMLHttpRequest();
       xhttp.open("POST", "/", true);
@@ -56,8 +77,12 @@ app.controller("choose_login_or_signup", function($scope, $http) {
       data,
       //data is the returned response from the server
       function(data, status){
+        // if the returned data is an html page
         if (data[0] == "<") {
-          $("body").html(data);
+          //REDIRECT
+          window.location.href = window.location.href + "client_portal";
+
+        // if what's returned is only a message
         } else {
           $("#returnMessage").html(data);
         }
@@ -68,45 +93,15 @@ app.controller("choose_login_or_signup", function($scope, $http) {
 
 
 
+
 });
 
 
+app.controller("client_portal", function($scope, $http) {
+  $scope.form_description = "Notice me now";
+});
 
 </script>
-
-
-<!--<div ng-app="login_page" ng-controller="server_response">
-  {{server_response}}
-</div>
--->
-
-<div ng-app="login_page" ng-controller="choose_login_or_signup">
-
-  <button ng-click="choose_login()">Login</button>
-  <button ng-click="choose_signup()">Signup</button>
-
-  <form id="login_form" action={{option}} method="POST">
-    <fieldset>
-      {{form_description}}
-      <br>
-      <div id="returnMessage"></div>
-      <br>
-      <div ng-repeat="x in label_option">
-        <label>{{x.description}} : </label>
-        <input type="text" name={{x.var_name}}>
-      </div>
-      <!--
-      <br>
-      <label>Password: </label>
-      <input type="text" name="password">
-      -->
-
-      <!--<input type="submit" value="Submit">-->
-
-    </fieldset>
-  </form>
-  <button ng-click="request_proceed()">Submit</button>
-</div>
 
 </body>
 </html>

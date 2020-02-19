@@ -81,8 +81,8 @@ function checkClientLogin(usernamePromise, emailPromise, passwordPromise, reqbod
 
 
 function sendToClientPage(req, res) {
-  fs.readFile('client/client_portal.htm', function(err, data) {
-    res.writeHead(200, {'Content-Type': 'text/html'});
+  fs.readFile('client/master_client_page.htm', function(err, data) {
+    //res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
     return res.end();
   });
@@ -91,12 +91,27 @@ function sendToClientPage(req, res) {
 
 app.get('/',function(req,res)
 {
-  fs.readFile('client/login_page.htm', function(err, data) {
+  fs.readFile('client/master_client_page.htm', function(err, data) {
     res.writeHead(200, {'Content-Type': 'text/html'});
     res.write(data);
     return res.end();
   });
 });
+
+function respondHTMLFile(str) {
+  app.get('/' + str,function(req,res)
+  {
+    console.log("Client requesting " + str);
+    fs.readFile("client/" + str, function(err, data) {
+      res.writeHead(200, {'Content-Type': 'text/html'});
+      res.write(data);
+      return res.end();
+    });
+  });
+}
+respondHTMLFile("login_page_template.htm");
+respondHTMLFile("client_portal.htm");
+
 /*
 app.get('/composer',function(req,res)
 {

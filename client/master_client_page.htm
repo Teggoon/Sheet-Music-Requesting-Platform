@@ -98,7 +98,10 @@ app.controller("login_page", function($scope, $http) {
 
 
 app.controller("client_portal", function($scope, $http) {
-  $scope.form_description = "Notice me now";
+  $http.get("")
+  .then(function(response) {
+    $scope.myWelcome = response.data;
+  });
 });
 
 </script>

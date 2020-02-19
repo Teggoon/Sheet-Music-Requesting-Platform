@@ -1,18 +1,32 @@
-Login Page:
+Information associated with a job:
+Name of the job
+Username of requester
+Link to music OR Direct upload (Look into Node.js Upload files, Formidable module)
+Preferred contact method
+Date Posted
+Price willing to pay
+
+Each User can:
+1. View all current jobs
+2. Post a new job
+3. Take a new job
 
 
+1. View current jobs:
+User should be able to view:
+Name of the job
+Username of requester
+Link to music OR Direct upload (Look into Node.js Upload files, Formidable module)
+Preferred contact method
+Date Posted
+Price willing to pay
 
-Home Page:
+2. Post a new job:
+User should be have a form where they can fill out:
+Name of the job
+Link to music OR Direct upload (Look into Node.js Upload files, Formidable module)
+Preferred contact method
+Price willing to pay
 
-
-
-
-
-Client Page:
-
-
-
-
-
-
-Composer Page:
+3. Take a new job:
+User should be able to 

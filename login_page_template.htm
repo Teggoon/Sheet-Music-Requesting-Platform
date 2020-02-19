@@ -1,0 +1,28 @@
+
+<h1> Newsheets </h1>
+Please log in or sign up
+
+<button ng-click="choose_login()">Login</button>
+<button ng-click="choose_signup()">Signup</button>
+
+<form id="login_form" action={{option}} method="POST">
+  <fieldset>
+    {{form_description}}
+    <br>
+    <div id="returnMessage"></div>
+    <br>
+    <div ng-repeat="x in label_option">
+      <label>{{x.description}} : </label>
+      <input type="text" name={{x.var_name}}>
+    </div>
+    <!--
+    <br>
+    <label>Password: </label>
+    <input type="text" name="password">
+    -->
+
+    <!--<input type="submit" value="Submit">-->
+
+  </fieldset>
+</form>
+<button ng-click="request_proceed()">Submit</button>

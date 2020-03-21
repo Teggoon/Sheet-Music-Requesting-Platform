@@ -1,32 +1,42 @@
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/";
 
+
+
+
+function createAccCollection(dbo) {
+  createAccountCollectionP.then();
+};
+
+
+
 MongoClient.connect(url, function(err, db) {
   if (err) throw err;
-  var dbo = db.db("smdb");
+  var dbo;
+  var accountCollection;
 
-  dbo.createCollection("accounts", function(err, res) {
-    if (err) throw err;
-  });
+  var createDatabaseP = new Promise(function(resolve, reject){
+    dbo = db.db("smdb");
+    console.log("database created!");
 
-  var accountCollection = dbo.collection("accounts");
 
-  var cleared = false;
+    accountCollection = dbo.collection("accounts");
 
-  accountCollection.deleteMany({},function(err, obj) {
-    if (err) throw err;
-    console.log(obj.result.n + " document(s) deleted, reset to empty collection.");
-    cleared = true;
-  });
-
-  if (cleared) {
     accountCollection.insertOne({username: "_", email: "_", password: "_", });
     console.log("Inserted filler account.");
-  }
+
+    resolve(); //connect to r38
+  });
+
+
+
+  createDatabaseP.then(function(){
+    //r38
+      db.close();
+  }, function(err){console.log(err);})
 
   /*accountCollection.find({username: "."}).toArray(function(err, result) {
     console.log(result);
   });*/
 
-  db.close();
 });

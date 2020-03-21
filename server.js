@@ -47,7 +47,6 @@ function processUsernameValidity(passwordPromise, canProceed, reqbody, res) {
   console.log("I am called.");
   if (!canProceed) {
     console.log("Client's username not found; access denied.");
-    res.send("Username not found!");
     res.statusCode = 200;
     res.write("Username not found!");
     res.send();

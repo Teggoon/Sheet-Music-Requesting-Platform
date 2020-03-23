@@ -1,6 +1,7 @@
 var express = require('express');
 var fs = require('fs');
 var bodyParser = require('body-parser');
+var crypto = require('crypto');
 const MongoClient = require('mongodb').MongoClient;
 /*const uri = "mongodb+srv://Teggoon:admin@cluster0-zplsz.mongodb.net/test?retryWrites=true&w=majority";
 const client = new MongoClient(uri, { useNewUrlParser: true , useUnifiedTopology: true });*/
@@ -8,6 +9,8 @@ var url = "mongodb://localhost:27017/";
 
 
 
+var loggedInUserMap = new Map();
+var hash = crypto.createHash("sha256");
 
 
 var app = express();
@@ -61,11 +64,11 @@ function checkPassword(passwordPromise, reqbody, res) {
   passwordPromise.then(function(result) {
     if (result) {
       console.log("Password Is Correct!!");
-      sendToClientPage(reqbody, res);
+      //console.log("Hash for user " + reqbody.username + " with password " + reqbody.password + ": " + hashId);
+      affirmLogin(reqbody, res);
     } else {
       console.log("Password Is incorrect.");
-      res.statusCode = 200;
-      res.write("Password is incorrect!");
+      denyLogin(reqbody, res);
       res.send();
     }
   }, function(err) {
@@ -79,12 +82,27 @@ function checkClientLogin(usernamePromise, emailPromise, passwordPromise, reqbod
 }
 
 
-function sendToClientPage(req, res) {
-  fs.readFile('client/master_client_page.htm', function(err, data) {
-    //res.writeHead(200, {'Content-Type': 'text/html'});
-    res.write(data);
-    return res.end();
-  });
+function affirmLogin(reqbody, res) {
+  var hashId = hash.update(reqbody.username + reqbody.password);
+  //the response object that is sent to the client.
+  var resObj = {
+    status_code: 200,
+    id: hashId,
+    name: reqbody.username,
+  };
+  res.write(JSON.stringify(resObj));
+  res.send();
+}
+
+function denyLogin(reqbody, res) {
+  var hashId = hash.update(reqbody.username + reqbody.password);
+  //the response object that is sent to the client.
+  var resObj = {
+    status_code: 401,
+    message: "Password incorrect! Please try again."
+  };
+  res.write(JSON.stringify(resObj));
+  res.send();
 }
 
 
@@ -241,7 +259,7 @@ app.post('/submit_form/signup',function(req,res)
 
       collection.insertOne({username: cusername, email: cemail, password: cpassword});
       console.log("New account created!");
-      sendToClientPage(req, res);
+      affirmLogin(req, res);
     }
 
 

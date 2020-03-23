@@ -76,15 +76,18 @@ app.controller("login_page", function($scope, $http) {
       $.post(requesturl,
       data,
       //data is the returned response from the server
-      function(data, status){
-        // if the returned data is an html page
-        if (data[0] == "<") {
-          //REDIRECT
+      function(data, status) {
+
+        // response object from the server, a JSON object parsed
+        var resObj = JSON.parse(data);
+
+        if (resObj.status_code == 200) {
+          //REDIRECTs
           window.location.href = window.location.href + "client_portal";
 
         // if what's returned is only a message
-        } else {
-          $("#returnMessage").html(data);
+      } else if (resObj.status_code == 401) {
+          $("#returnMessage").html(resObj.message);
         }
       });
 
